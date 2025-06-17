@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Father's Day Wishes</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        /* Chemical Reaction Background */
+        .reaction-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+        
+        .reaction-bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,0,0.8) 0%, rgba(255,255,0,0) 70%);
+            filter: blur(2px);
+            opacity: 0;
+            animation: bubble-rise 8s infinite ease-in;
+        }
+        
+        .reaction-flash {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,0,0.3) 0%, rgba(255,255,0,0) 70%);
+            opacity: 0;
+            animation: reaction-flash 10s infinite;
+        }
+        
+        @keyframes bubble-rise {
+            0% {
+                transform: translateY(0) scale(0.3);
+                opacity: 0;
+            }
+            20% {
+                opacity: 0.7;
+            }
+            80% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100vh) scale(1.5);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes reaction-flash {
+            0%, 85% {
+                opacity: 0;
+                transform: scale(1);
+            }
+            5%, 15% {
+                opacity: 0.3;
+                transform: scale(1.1);
+            }
+            10% {
+                opacity: 0.5;
+                transform: scale(1.2);
+            }
+            20% {
+                opacity: 0;
+                transform: scale(1);
+            }
+        }
+        
+        .btn-container {
+            position: relative;
+            text-align: center;
+            z-index: 2;
+        }
+        
+        .wish-btn {
+            position: relative;
+            padding: 15px 30px;
+            font-size: 18px;
+            background: linear-gradient(45deg, #1a1a1a, #333);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            overflow: hidden;
+            z-index: 1;
+            box-shadow: 0 0 10px rgba(255, 255, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .wish-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 0, 0.7);
+        }
+        
+        .wish-btn::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                to bottom right,
+                transparent, transparent, transparent,
+                rgba(255, 255, 0, 0.3),
+                transparent, transparent, transparent
+            );
+            transform: rotate(45deg);
+            z-index: -1;
+            animation: lightning 3s linear infinite;
+            opacity: 0;
+        }
+        
+        .wish-btn.active::before {
+            opacity: 1;
+            animation: lightning 0.5s linear infinite;
+        }
+        
+        @keyframes lightning {
+            0% {
+                transform: rotate(45deg) translate(-10%, -10%);
+            }
+            20% {
+                transform: rotate(45deg) translate(10%, 10%);
+            }
+            40% {
+                transform: rotate(45deg) translate(-5%, -5%);
+            }
+            60% {
+                transform: rotate(45deg) translate(5%, 5%);
+            }
+            100% {
+                transform: rotate(45deg) translate(-10%, -10%);
+            }
+        }
+        
+        .wish-message {
+            position: absolute;
+            top: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: #ff0;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid #ff0;
+            opacity: 0;
+            transition: all 0.5s ease;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(255, 255, 0, 0.7);
+            z-index: 3;
+        }
+        
+        .wish-message.show {
+            opacity: 1;
+            top: -120px;
+        }
+        
+        .spark {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #ff0;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            z-index: 2;
+        }
+    </style>
+</head>
+<body>
+    <div class="reaction-container">
+        <div class="reaction-flash"></div>
+        <!-- Bubbles will be added by JavaScript -->
+    </div>
+    
+    <div class="btn-container">
+        <div class="wish-message">Happy Father's Day!<br>Thank you for everything!</div>
+        <button class="wish-btn">Click for Father's Day Wishes</button>
+    </div>
+
+    <script>
+        // Create chemical reaction bubbles
+        function createBubbles() {
+            const container = document.querySelector('.reaction-container');
+            
+            for (let i = 0; i < 30; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'reaction-bubble';
+                
+                // Random properties
+                const size = 20 + Math.random() * 80;
+                const left = Math.random() * 100;
+                const delay = Math.random() * 15;
+                const duration = 5 + Math.random() * 10;
+                
+                bubble.style.width = `${size}px`;
+                bubble.style.height = `${size}px`;
+                bubble.style.left = `${left}%`;
+                bubble.style.bottom = `-${size}px`;
+                bubble.style.animationDelay = `${delay}s`;
+                bubble.style.animationDuration = `${duration}s`;
+                
+                container.appendChild(bubble);
+            }
+        }
+        
+        // Initialize
+        createBubbles();
+        
+        const btn = document.querySelector('.wish-btn');
+        const message = document.querySelector('.wish-message');
+        
+        btn.addEventListener('click', function() {
+            // Toggle button animation
+            this.classList.toggle('active');
+            
+            // Toggle message visibility
+            message.classList.toggle('show');
+            
+            // Create yellow sparks
+            if (this.classList.contains('active')) {
+                createSparks();
+            }
+        });
+        
+        function createSparks() {
+            const btnRect = btn.getBoundingClientRect();
+            const centerX = btnRect.left + btnRect.width / 2;
+            const centerY = btnRect.top + btnRect.height / 2;
+            
+            for (let i = 0; i < 20; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'spark';
+                document.body.appendChild(spark);
+                
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 50 + Math.random() * 50;
+                const duration = 0.5 + Math.random() * 0.5;
+                
+                const startX = centerX;
+                const startY = centerY;
+                const endX = centerX + Math.cos(angle) * distance;
+                const endY = centerY + Math.sin(angle) * distance;
+                
+                spark.style.left = startX + 'px';
+                spark.style.top = startY + 'px';
+                spark.style.opacity = '1';
+                
+                // Animate spark
+                const animation = spark.animate([
+                    { 
+                        transform: 'translate(0, 0) scale(1)',
+                        opacity: 1
+                    },
+                    { 
+                        transform: `translate(${endX - startX}px, ${endY - startY}px) scale(0)`,
+                        opacity: 0
+                    }
+                ], {
+                    duration: duration * 1000,
+                    easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+                });
+                
+                animation.onfinish = () => {
+                    spark.remove();
+                };
+            }
+        }
+    </script>
+</body>
+</html>

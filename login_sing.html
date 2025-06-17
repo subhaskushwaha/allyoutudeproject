@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Animated Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="login_sing.css">
+</head>
+
+<body>
+    <!-- Floating particles background -->
+    <div class="particles">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+    <!-- Login Container -->
+    <div class="container">
+    <div class="logo">
+    <div class="logo-icon">
+    <i class="fas fa-user-lock"></i>
+    </div>
+        </div>
+        <div class="header">
+            <h1>Welcome Back</h1>
+            <p>Sign in to access your account and continue your journey</p>
+        </div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username or Email</label>
+                <div class="input-with-icon">
+                    <input type="text" id="username" placeholder="Enter your username or email" required>
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+<div class="form-group">
+ <label for="password">Password</label>
+ <div class="input-with-icon">
+<input type="password" id="password" placeholder="Enter your password" required>
+ <i class="fas fa-lock"></i>
+</div>
+            </div>
+
+            <div class="options">
+                <div class="remember">
+                    <input type="checkbox" id="remember">
+                    <label for="remember">Remember me</label>
+                </div>
+                <a href="#" class="forgot-password" id="forgotPassword">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn-login">Login</button>
+        </form>
+
+        <div class="register">
+            Don't have an account? <a href="#">Sign Up</a>
+        </div>
+
+        <div class="divider">
+            <div class="line"></div>
+            <div class="text">Or continue with</div>
+            <div class="line"></div>
+        </div>
+
+        <div class="social-login">
+            <a href="#" class="social-btn facebook">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="#" class="social-btn google">
+                <i class="fab fa-google"></i>
+            </a>
+            <a href="#" class="social-btn twitter">
+                <i class="fab fa-twitter"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div class="modal" id="forgotModal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h2>Reset Your Password</h2>
+            <p>Enter your email address and we'll send you a link to reset your password.</p>
+
+            <form id="resetForm">
+                <div class="form-group">
+                    <label for="reset-email">Email Address</label>
+                    <div class="input-with-icon">
+                        <input type="email" id="reset-email" placeholder="Enter your email" required>
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-reset">Send Reset Link</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const loginForm = document.getElementById('loginForm');
+            const forgotPassword = document.getElementById('forgotPassword');
+            const forgotModal = document.getElementById('forgotModal');
+            const closeModal = document.getElementById('closeModal');
+            const resetForm = document.getElementById('resetForm');
+
+            // Show forgot password modal
+            forgotPassword.addEventListener('click', function (e) {
+                e.preventDefault();
+                forgotModal.style.display = 'flex';
+            });
+
+            // Close modal
+            closeModal.addEventListener('click', function () {
+                forgotModal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function (e) {
+                if (e.target === forgotModal) {
+                    forgotModal.style.display = 'none';
+                }
+            });
+
+            // Login form submission
+            loginForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Get input values
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                const rememberMe = document.getElementById('remember').checked;
+
+                // Show loading effect on button
+                const submitBtn = this.querySelector('.btn-login');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Authenticating...';
+                submitBtn.disabled = true;
+
+                // Simulate login process
+                setTimeout(() => {
+                    // Reset button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+
+                    // Show success message
+                    alert(`Login successful!\nWelcome back, ${username}`);
+                }, 1500);
+            });
+
+            // Reset form submission
+            resetForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                // Get input values
+                const email = document.getElementById('reset-email').value;
+
+                // Show loading effect on button
+                const submitBtn = this.querySelector('.btn-reset');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                submitBtn.disabled = true;
+
+                // Simulate sending process
+                setTimeout(() => {
+                    // Reset button
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+
+                    // Show success message
+                    alert(`Password reset link sent to ${email}`);
+
+                    // Close modal
+                    forgotModal.style.display = 'none';
+                }, 1500);
+            });
+
+            // Add ripple effect to buttons
+            const buttons = document.querySelectorAll('.btn-login, .btn-reset');
+            buttons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    // Remove any existing ripple
+                    const ripple = this.querySelector('.ripple');
+                    if (ripple) ripple.remove();
+
+                    // Create ripple element
+                    const circle = document.createElement('span');
+                    circle.classList.add('ripple');
+                    this.appendChild(circle);
+
+                    // Position ripple
+                    const rect = this.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+
+                    circle.style.width = circle.style.height = `${size}px`;
+                    circle.style.left = `${x}px`;
+                    circle.style.top = `${y}px`;
+
+                    // Remove ripple after animation
+                    setTimeout(() => {
+                        circle.remove();
+                    }, 600);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
