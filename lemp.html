@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Interactive Lamp with Glow</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #1a237e, #311b92, #4a148c);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .background-blur {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backdrop-filter: blur(15px);
+      background: rgba(0, 0, 0, 0.3);
+      z-index: 1;
+    }
+
+    .container {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 30px;
+      padding: 40px;
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      max-width: 500px;
+      width: 90%;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      width: 100%;
+    }
+
+    .header h1 {
+      font-size: 2.4rem;
+      margin-bottom: 10px;
+      background: linear-gradient(to right, #ffd700, #ffa500);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.85;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .lamp-container {
+      position: relative;
+      height: 300px;
+      width: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .lamp-glow-front {
+      position: absolute;
+      top: 90px;
+      width: 140px;
+      height: 140px;
+      background: radial-gradient(circle, rgba(255,223,0,0.2) 0%, rgba(255,193,7,0.1) 50%, transparent 80%);
+      border-radius: 50%;
+      animation: glowPulse 2s infinite ease-in-out;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.4;
+      }
+      50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+      }
+    }
+
+    .lamp-sparkle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: #fff176;
+      border-radius: 50%;
+      animation: sparkleFloat 3s infinite ease-in-out;
+      opacity: 0.8;
+      z-index: 2;
+    }
+
+    @keyframes sparkleFloat {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 0.7;
+      }
+      50% {
+        transform: translateY(-60px) scale(1.2);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-120px) scale(0.8);
+        opacity: 0;
+      }
+    }
+
+    .lamp-base {
+      width: 90px;
+      height: 16px;
+      background: linear-gradient(to right, #8B4513, #A0522D, #8B4513);
+      border-radius: 50%;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+      z-index: 4;
+    }
+
+    .lamp-stand {
+      width: 14px;
+      height: 160px;
+      background: linear-gradient(to bottom, #c0c0c0, #e0e0e0, #c0c0c0);
+      border-radius: 7px;
+      z-index: 3;
+    }
+
+    .lamp-neck {
+      width: 25px;
+      height: 15px;
+      background: #5d4037;
+      border-radius: 5px;
+      position: relative;
+      top: -1px;
+      z-index: 4;
+    }
+
+    .lamp-shade {
+      width: 140px;
+      height: 90px;
+      background: linear-gradient(to bottom, #e74c3c, #c0392b);
+      border-radius: 50% 50% 10px 10px;
+      top: -20px;
+      position: relative;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      z-index: 2;
+    }
+
+    .inner-light {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 30%, rgba(255,255,255,0) 70%);
+      border-radius: 50%;
+      top: -15px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1;
+    }
+
+    .bulb {
+      width: 30px;
+      height: 30px;
+      background: #f0f0f0;
+      border-radius: 50%;
+      top: 10px;
+      position: relative;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      z-index: 3;
+      transition: all 0.3s ease;
+    }
+
+    .light-beam {
+      position: absolute;
+      width: 160px;
+      height: 120px;
+      background: radial-gradient(ellipse at center, rgba(255,215,0,0.3) 0%, rgba(255,215,0,0.1) 40%, rgba(255,215,0,0) 70%);
+      border-radius: 50%;
+      top: 250px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 0;
+    }
+
+    .brightness-control {
+      width: 100%;
+      max-width: 320px;
+      padding: 25px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .brightness-title {
+      color: white;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slider-container {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .slider-icon {
+      color: #ffd700;
+      font-size: 1.5rem;
+    }
+
+    .brightness-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      height: 10px;
+      border-radius: 10px;
+      background: linear-gradient(to right, #333, #ffd700);
+      outline: none;
+    }
+
+    .brightness-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #ffd700;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      border: 2px solid white;
+    }
+
+    .brightness-value {
+      min-width: 50px;
+      color: white;
+      font-size: 1.1rem;
+      font-weight: bold;
+      background: rgba(255, 215, 0, 0.2);
+      padding: 5px 10px;
+      border-radius: 20px;
+      text-align: center;
+    }
+
+    .status {
+      padding: 10px 30px;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 50px;
+      color: white;
+      font-size: 1.1rem;
+      text-align: center;
+      transition: all 0.4s ease;
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 20px;
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+      font-size: 0.9rem;
+      z-index: 2;
+    }
+
+    @media (max-width: 500px) {
+      .brightness-control {
+        padding: 15px;
+      }
+
+      .slider-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .brightness-value {
+        margin-top: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="background-blur"></div>
+
+  <div class="container">
+    <div class="header">
+      <h1>Interactive Lamp</h1>
+      <p>Adjust the brightness slider to control the lamp's illumination</p>
+    </div>
+
+    <div class="lamp-container" id="lampContainer">
+      <div class="lamp-glow-front"></div>
+      <div class="light-beam" id="lightBeam"></div>
+      <div class="lamp-base"></div>
+      <div class="lamp-stand"></div>
+      <div class="lamp-neck"></div>
+      <div class="lamp-shade">
+        <div class="inner-light" id="innerLight"></div>
+        <div class="bulb" id="bulb"></div>
+      </div>
+    </div>
+
+    <div class="brightness-control">
+      <div class="brightness-title">
+        <i class="fas fa-sun"></i>
+        <span>Lamp Brightness</span>
+      </div>
+      <div class="slider-container">
+        <i class="fas fa-moon slider-icon"></i>
+        <input type="range" min="0" max="100" value="0" class="brightness-slider" id="brightnessSlider">
+        <i class="fas fa-sun slider-icon"></i>
+        <div class="brightness-value" id="brightnessValue">0%</div>
+      </div>
+    </div>
+
+    <div class="status" id="status">Lamp is currently OFF</div>
+  </div>
+
+  <div class="footer">
+    <p>Designed with ❤ | Lamp Brightness Control</p>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+  const brightnessSlider = document.getElementById('brightnessSlider');
+  const brightnessValue = document.getElementById('brightnessValue');
+  const bulb = document.getElementById('bulb');
+  const innerLight = document.getElementById('innerLight');
+  const lightBeam = document.getElementById('lightBeam');
+  const status = document.getElementById('status');
+  const lampContainer = document.getElementById('lampContainer');
+
+  function updateLamp(brightness) {
+    brightnessValue.textContent = `${brightness}%`;
+    const opacity = brightness / 100;
+    innerLight.style.opacity = opacity;
+    lightBeam.style.opacity = opacity;
+
+    if (brightness > 0) {
+      bulb.style.background = '#fff9c4';
+      bulb.style.boxShadow = `0 0 ${15 + brightness / 3}px #ffeb3b, 0 0 ${30 + brightness}px #ffc107`;
+      status.textContent = `Lamp is ON at ${brightness}% brightness`;
+      status.style.background = `rgba(255, 215, 0, ${0.1 + opacity * 0.2})`;
+    } else {
+      bulb.style.background = '#f0f0f0';
+      bulb.style.boxShadow = '0 0 10px rgba(0,0,0,0.2)';
+      status.textContent = 'Lamp is currently OFF';
+      status.style.background = 'rgba(0, 0, 0, 0.2)';
+    }
+  }
+
+  // Add sparkles
+  for (let i = 0; i < 8; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.classList.add('lamp-sparkle');
+    sparkle.style.left = `${80 + Math.random() * 20}px`;
+    sparkle.style.top = `${160 + Math.random() * 20}px`;
+    sparkle.style.animationDelay = `${Math.random() * 3}s`;
+    lampContainer.appendChild(sparkle);
+  }
+
+  updateLamp(0);
+
+  brightnessSlider.addEventListener('input', function () {
+    updateLamp(parseInt(this.value));
+  });
+
+  lampContainer.addEventListener('click', function () {
+    const currentValue = parseInt(brightnessSlider.value);
+    brightnessSlider.value = currentValue > 0 ? 0 : 50;
+    updateLamp(parseInt(brightnessSlider.value));
+  });
+});
+
+  </script>
+</body>
+</html>

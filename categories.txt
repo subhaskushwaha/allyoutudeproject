@@ -1,0 +1,7 @@
+Food
+Transportation
+Entertainment
+Utilities
+Rent
+Healthcare
+Education

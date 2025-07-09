@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download Button with Loading Animation</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #1a2a6c);
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            color: #fff;
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: left;
+        }
+        
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card p {
+            color: #34495e;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .download-container {
+            position: relative;
+            margin: 40px auto;
+            width: 260px;
+        }
+        
+        .download-btn {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(45deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            cursor: pointer;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.5);
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(52, 152, 219, 0.7);
+        }
+        
+        .download-btn:active {
+            transform: translateY(0);
+        }
+        
+        .download-btn i {
+            margin-right: 10px;
+        }
+        
+        .loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #2c3e50, #34495e);
+            border-radius: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 2;
+        }
+        
+        .loading.active {
+            opacity: 1;
+        }
+        
+        .spinner {
+            width: 30px;
+            height: 30px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background: #2ecc71;
+            border-radius: 0 0 50px 50px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .success-message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: #2ecc71;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.5s ease;
+            z-index: 100;
+        }
+        
+        .success-message.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .feature:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .feature i {
+            font-size: 2.5rem;
+            color: #3498db;
+            margin-bottom: 15px;
+        }
+        
+        .feature h3 {
+            color: white;
+            margin-bottom: 10px;
+        }
+        
+        .feature p {
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Download Manager</h1>
+        <p class="subtitle">Click the button below to download premium content</p>
+        
+        <div class="card">
+            <h2><i class="fas fa-file-download"></i> Project Files</h2>
+            <p>This download package includes all source files, documentation, and assets for the project. The package is a ZIP file containing:</p>
+            <p><i class="fas fa-check-circle"></i> Complete HTML, CSS, JavaScript files</p>
+            <p><i class="fas fa-check-circle"></i> Documentation and user guides</p>
+            <p><i class="fas fa-check-circle"></i> Sample images and resources</p>
+            <p><i class="fas fa-check-circle"></i> License information</p>
+        </div>
+        
+        <div class="download-container">
+            <button class="download-btn" id="downloadBtn">
+                <i class="fas fa-download"></i> Download Now
+            </button>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+            </div>
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <h3>Secure Download</h3>
+                <p>All files are scanned for viruses and malware</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-bolt"></i>
+                <h3>Fast Transfer</h3>
+                <p>High-speed servers for quick downloads</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-sync-alt"></i>
+                <h3>Automatic Resume</h3>
+                <p>Continue interrupted downloads seamlessly</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="success-message" id="successMessage">
+        <i class="fas fa-check-circle"></i> Download completed successfully!
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const downloadBtn = document.getElementById('downloadBtn');
+            const loading = document.getElementById('loading');
+            const progressBar = document.getElementById('progressBar');
+            const successMessage = document.getElementById('successMessage');
+            
+            downloadBtn.addEventListener('click', function() {
+                // Show loading animation
+                loading.classList.add('active');
+                downloadBtn.disabled = true;
+                
+                // Simulate download progress
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += Math.floor(Math.random() * 10);
+                    if (progress >= 100) {
+                        progress = 100;
+                        clearInterval(interval);
+                        
+                        // Complete download
+                        setTimeout(() => {
+                            loading.classList.remove('active');
+                            progressBar.style.width = '0%';
+                            downloadBtn.disabled = false;
+                            
+                            // Show success message
+                            successMessage.classList.add('show');
+                            
+                            // Hide success message after 3 seconds
+                            setTimeout(() => {
+                                successMessage.classList.remove('show');
+                            }, 3000);
+                        }, 500);
+                    }
+                    progressBar.style.width = progress + '%';
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

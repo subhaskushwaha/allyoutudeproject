@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circular Share Menu | GitHub & New Twitter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            padding: 20px;
+            overflow: hidden;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(15, 15, 35, 0.85);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            max-width: 800px;
+            width: 100%;
+            border: 1px solid rgba(100, 100, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            z-index: 2;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(120, 120, 255, 0.1) 0%, transparent 70%);
+            z-index: -1;
+        }
+        
+        h1 {
+            color: #fff;
+            margin-bottom: 25px;
+            font-size: 2.8rem;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53, #6b8cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .description {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 1.2rem;
+            margin-bottom: 45px;
+            line-height: 1.7;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .share-container {
+            position: relative;
+            height: 380px;
+            margin: 40px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .share-button {
+            position: absolute;
+            width: 85px;
+            height: 85px;
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border: 2px solid rgba(255, 255, 255, 0.15);
+        }
+        
+        .share-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.7);
+        }
+        
+        .share-button i {
+            font-size: 36px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .option {
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: #1a1a2e;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 0;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            top: 50%;
+            left: 50%;
+        }
+        
+        .option i {
+            font-size: 28px;
+            color: white;
+            transition: transform 0.3s;
+        }
+        
+        .option:hover {
+            transform: translate(-50%, -50%) scale(1.18) !important;
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
+        }
+        
+        .option:hover i {
+            transform: scale(1.2);
+        }
+        
+        /* Social media colors */
+        .option:nth-child(2) { background: #1877F2; } /* Facebook */
+        .option:nth-child(3) { background: #000; }     /* Twitter (X) */
+        .option:nth-child(4) { background: #25D366; } /* WhatsApp */
+        .option:nth-child(5) { background: #E1306C; } /* Instagram */
+        .option:nth-child(6) { background: #0A66C2; } /* LinkedIn */
+        .option:nth-child(7) { background: #FF0000; } /* YouTube */
+        .option:nth-child(8) { background: #333; }    /* GitHub */
+        .option:nth-child(9) { background: #7289DA; } /* Discord */
+        
+        .option span {
+            position: absolute;
+            top: -45px;
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+        
+        .option:hover span {
+            opacity: 1;
+        }
+        
+        .active .share-button {
+            transform: rotate(135deg);
+            background: linear-gradient(45deg, #ff8e53, #ff6b6b);
+        }
+        
+        .active .option {
+            opacity: 1;
+        }
+        
+        /* Position options in a circle */
+        .active .option:nth-child(2) {
+            transform: translate(calc(-50% - 140px), -50%);
+        }
+        
+        .active .option:nth-child(3) {
+            transform: translate(calc(-50% - 100px), calc(-50% - 100px));
+        }
+        
+        .active .option:nth-child(4) {
+            transform: translate(-50%, calc(-50% - 140px));
+        }
+        
+        .active .option:nth-child(5) {
+            transform: translate(calc(-50% + 100px), calc(-50% - 100px));
+        }
+        
+        .active .option:nth-child(6) {
+            transform: translate(calc(-50% + 140px), -50%);
+        }
+        
+        .active .option:nth-child(7) {
+            transform: translate(calc(-50% + 100px), calc(-50% + 100px));
+        }
+        
+        .active .option:nth-child(8) {
+            transform: translate(-50%, calc(-50% + 140px));
+        }
+        
+        .active .option:nth-child(9) {
+            transform: translate(calc(-50% - 100px), calc(-50% + 100px));
+        }
+        
+        .footer {
+            color: rgba(255, 255, 255, 0.55);
+            margin-top: 50px;
+            font-size: 1rem;
+            text-align: center;
+        }
+        
+        /* Animated background elements */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(100, 200, 255, 0.15);
+            animation: float 15s infinite linear;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* New Twitter (X) icon styling */
+        .x-icon {
+            position: relative;
+            width: 28px;
+            height: 28px;
+        }
+        
+        .x-icon::before,
+        .x-icon::after {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 2px;
+        }
+        
+        .x-icon::before {
+            width: 28px;
+            height: 4px;
+            top: 12px;
+            left: 0;
+            transform: rotate(45deg);
+        }
+        
+        .x-icon::after {
+            width: 28px;
+            height: 4px;
+            top: 12px;
+            left: 0;
+            transform: rotate(-45deg);
+        }
+        
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .description {
+                font-size: 1rem;
+            }
+            
+            .share-container {
+                height: 320px;
+            }
+            
+            .option {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .active .option:nth-child(2) {
+                transform: translate(calc(-50% - 120px), -50%);
+            }
+            
+            .active .option:nth-child(3) {
+                transform: translate(calc(-50% - 85px), calc(-50% - 85px));
+            }
+            
+            .active .option:nth-child(4) {
+                transform: translate(-50%, calc(-50% - 120px));
+            }
+            
+            .active .option:nth-child(5) {
+                transform: translate(calc(-50% + 85px), calc(-50% - 85px));
+            }
+            
+            .active .option:nth-child(6) {
+                transform: translate(calc(-50% + 120px), -50%);
+            }
+            
+            .active .option:nth-child(7) {
+                transform: translate(calc(-50% + 85px), calc(-50% + 85px));
+            }
+            
+            .active .option:nth-child(8) {
+                transform: translate(-50%, calc(-50% + 120px));
+            }
+            
+            .active .option:nth-child(9) {
+                transform: translate(calc(-50% - 85px), calc(-50% + 85px));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <h1>Circular Share Menu</h1>
+        <p class="description">Click the central share button to reveal application options. The menu includes GitHub and the new Twitter (X) logo. Hover over each icon to see the platform name.</p>
+        
+        <div class="share-container" id="shareContainer">
+            <div class="share-button" id="shareButton">
+                <i class="fas fa-share-alt"></i>
+            </div>
+            
+            <!-- Social media options -->
+            <div class="option">
+                <i class="fab fa-facebook-f"></i>
+                <span>Facebook</span>
+            </div>
+            <div class="option">
+                <div class="x-icon"></div>
+                <span>X (Twitter)</span>
+            </div>
+            <div class="option">
+                <i class="fab fa-whatsapp"></i>
+                <span>WhatsApp</span>
+            </div>
+            <div class="option">
+                <i class="fab fa-instagram"></i>
+                <span>Instagram</span>
+            </div>
+            <div class="option">
+                <i class="fab fa-linkedin-in"></i>
+                <span>LinkedIn</span>
+            </div>
+            <div class="option">
+                <i class="fab fa-youtube"></i>
+                <span>YouTube</span>
+            </div>
+            <div class="option">
+                <i class="fab fa-github"></i>
+                <span>GitHub</span>
+            </div>
+            <div class="option">
+                <i class="fab fa-discord"></i>
+                <span>Discord</span>
+            </div>
+        </div>
+        
+        <p class="footer">Click the share button again or anywhere outside to close the menu</p>
+    </div>
+
+    <script>
+      const shareContainer = document.getElementById('shareContainer');
+const shareButton = document.getElementById('shareButton');
+
+// Toggle menu on share button click
+shareButton.addEventListener('click', (e) => {
+    e.stopPropagation();
+    shareContainer.classList.toggle('active');
+});
+
+// Close menu when clicking outside
+document.addEventListener('click', (e) => {
+    if (!shareContainer.contains(e.target)) {
+        shareContainer.classList.remove('active');
+    }
+});
+
+// Create animated particles
+const particlesContainer = document.getElementById('particles');
+const particlesCount = 30;
+
+for (let i = 0; i < particlesCount; i++) {
+    const particle = document.createElement('div');
+    particle.classList.add('particle');
+
+    // Random properties
+    const size = Math.random() * 30 + 5;
+    const posX = Math.random() * 100;
+    const duration = Math.random() * 20 + 10;
+    const delay = Math.random() * 5;
+
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    particle.style.left = `${posX}%`;
+    particle.style.animationDuration = `${duration}s`;
+    particle.style.animationDelay = `${delay}s`;
+
+    particlesContainer.appendChild(particle);
+}
+
+// Add click effect to options
+const options = document.querySelectorAll('.option');
+options.forEach(option => {
+    option.addEventListener('click', () => {
+        option.style.transform = 'translate(-50%, -50%) scale(0.9)';
+        setTimeout(() => {
+            option.style.transform = '';
+        }, 300);
+    });
+});
+    </script>
+    
+</body>
+</html>

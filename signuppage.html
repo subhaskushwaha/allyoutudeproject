@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Login System</title>
+    <link rel="stylesheet" href="sign.css">
+</head>
+<body>
+    <!-- Success Message (hidden by default) -->
+    <div class="success-message" id="successMessage">
+        <i class="fas fa-check-circle"></i>
+        <span>Logged in successfully!</span>
+    </div>
+
+    <div class="container" id="container">
+        <div class="form-container sign-up-container">
+            <form action="#">
+                <h1>Create Account</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your email for registration</span>
+                <div class="input-container">
+                    <input type="text" placeholder=" " id="name" />
+                    <label for="name">Name</label>
+                </div>
+                <div class="input-container">
+                    <input type="email" placeholder=" " id="email" />
+                    <label for="email">Email</label>
+                </div>
+                <div class="input-container">
+                    <input type="password" placeholder=" " id="password" />
+                    <label for="password">Password</label>
+                </div>
+                <button type="button" id="signUpButton">Sign Up</button>
+            </form>
+        </div>
+        <div class="form-container sign-in-container">
+            <form action="#">
+                <h1>login in</h1>
+                <div class="social-container">
+                    <a href="#" class="social"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social"><i class="fab fa-google"></i></a>
+                    <a href="#" class="social"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your account</span>
+                <div class="input-container">
+                    <input type="email" placeholder=" " id="login-email" />
+                    <label for="login-email">Email</label>
+                </div>
+                <div class="input-container">
+                    <input type="password" placeholder=" " id="login-password" />
+                    <label for="login-password">Password</label>
+                </div>
+                <a href="#" id="forgotPasswordLink">Forgot your password?</a>
+                <button type="button" id="signInButton">login In</button>
+            </form>
+        </div>
+        <div class="form-container forgot-password-container">
+            <form action="#">
+                <h1>Reset Password</h1>
+                <div class="forgot-password-form">
+                    <h2>Forgot Password?</h2>
+                    <p>Enter your email address and we'll send you a link to reset your password.</p>
+                    <div class="input-container">
+                        <input type="email" placeholder=" " id="forgot-email" />
+                        <label for="forgot-email">Email Address</label>
+                    </div>
+                    <button type="button" id="resetPasswordButton">Send Reset Link</button>
+                    <a href="#" class="back-to-login" id="backToLogin"><i class="fas fa-arrow-left"></i> Back to Login</a>
+                </div>
+            </form>
+        </div>
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h2>Welcome Back!</h2>
+                    <p>To keep connected with us please login with your personal info</p>
+                    <button class="ghost" id="signInOverlay">Sign In</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h2>Hello, Friend!</h2>
+                    <p>Enter your personal details and start your journey with us</p>
+                    <button class="ghost" id="signUpOverlay">Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="sign.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

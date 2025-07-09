@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Shorts Clone</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #000;
+            color: #fff;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .shorts-container {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .short-video {
+            height: 100vh;
+            width: 100%;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .video-player {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 50%);
+        }
+        
+        .channel-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 15px;
+            border: 2px solid #fff;
+        }
+        
+        .channel-name {
+            font-weight: bold;
+            font-size: 16px;
+        }
+        
+        .subscribe-btn {
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-left: auto;
+            cursor: pointer;
+        }
+        
+        .video-description {
+            margin-bottom: 20px;
+            font-size: 16px;
+            max-width: 80%;
+            line-height: 1.4;
+        }
+        
+        .video-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .video-music {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+        
+        .video-music i {
+            margin-right: 10px;
+        }
+        
+        .action-buttons {
+            position: absolute;
+            right: 20px;
+            bottom: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .action-button {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+            cursor: pointer;
+        }
+        
+        .action-button i {
+            font-size: 28px;
+            margin-bottom: 5px;
+            background: rgba(0,0,0,0.3);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .action-button span {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .like-button.active i {
+            color: #ff0000;
+        }
+        
+        .progress-bar {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            padding: 0 5px;
+        }
+        
+        .progress-segment {
+            height: 3px;
+            flex-grow: 1;
+            margin: 0 2px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-segment.active .progress-fill {
+            display: block;
+            height: 100%;
+            background-color: white;
+            width: 0%;
+            animation: progress 15s linear forwards;
+        }
+        
+        @keyframes progress {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+        
+        .top-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 10;
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 20px;
+            color: #ff0000;
+        }
+        
+        .search-icon {
+            font-size: 22px;
+        }
+        
+        .video-controls {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 5;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .short-video:hover .video-controls {
+            opacity: 1;
+        }
+        
+        .comments-section {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.9);
+            padding: 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+            z-index: 20;
+            height: 70vh;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+        
+        .comments-section.active {
+            transform: translateY(0);
+        }
+        
+        .comments-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 15px;
+        }
+        
+        .close-comments {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .comments-container {
+            height: calc(70vh - 150px);
+            overflow-y: auto;
+        }
+        
+        .comment {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .comment-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        
+        .comment-content {
+            flex-grow: 1;
+        }
+        
+        .comment-author {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .comment-text {
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .comment-actions {
+            display: flex;
+            margin-top: 8px;
+        }
+        
+        .comment-action {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+            color: #aaa;
+            font-size: 13px;
+        }
+        
+        .comment-action i {
+            margin-right: 5px;
+            font-size: 16px;
+        }
+        
+        .add-comment {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            position: absolute;
+            bottom: 20px;
+            width: calc(100% - 40px);
+        }
+        
+        .add-comment input {
+            flex-grow: 1;
+            background: #333;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 20px;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .add-comment button {
+            background: none;
+            border: none;
+            color: #ff0000;
+            font-weight: bold;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+        
+        .swipe-hint {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <div class="shorts-container" id="shortsContainer">
+        <!-- Video 1 -->
+        <div class="short-video">
+            <video class="video-player" loop>
+                <source src="https://assets.codepen.io/3364143/sample.mp4" type="video/mp4">
+            </video>
+            <div class="progress-bar">
+                <div class="progress-segment active"><div class="progress-fill"></div></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+            </div>
+            <div class="top-bar">
+                <div class="logo">Shorts</div>
+                <div class="search-icon"><i class="fas fa-search"></i></div>
+            </div>
+            <div class="video-overlay">
+                <div class="channel-info">
+                    <img src="https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Channel" class="avatar">
+                    <div class="channel-name">@travel_adventures</div>
+                    <button class="subscribe-btn">Subscribe</button>
+                </div>
+                <div class="video-description">
+                    <div class="video-title">Beautiful mountains in Switzerland 🏔️</div>
+                    <p>Exploring the Swiss Alps with friends. The view was absolutely breathtaking!</p>
+                </div>
+                <div class="video-music">
+                    <i class="fas fa-music"></i>
+                    <span>Original Sound - Travel Adventures</span>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="action-button like-button" onclick="toggleLike(this)">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>24.5K</span>
+                </div>
+                <div class="action-button dislike-button" onclick="toggleDislike(this)">
+                    <i class="fas fa-thumbs-down"></i>
+                    <span>Dislike</span>
+                </div>
+                <div class="action-button" onclick="toggleComments()">
+                    <i class="fas fa-comment"></i>
+                    <span>3.2K</span>
+                </div>
+                <div class="action-button">
+                    <i class="fas fa-share"></i>
+                    <span>Share</span>
+                </div>
+            </div>
+            <div class="video-controls" onclick="togglePlay(this)">
+                <i class="fas fa-pause"></i>
+            </div>
+            <div class="swipe-hint">Swipe up for next video</div>
+        </div>
+        
+        <!-- Video 2 -->
+        <div class="short-video">
+            <video class="video-player" loop>
+                <source src="https://assets.codepen.io/3364143/sample.mp4" type="video/mp4">
+            </video>
+            <div class="progress-bar">
+                <div class="progress-segment"></div>
+                <div class="progress-segment active"><div class="progress-fill"></div></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+            </div>
+            <div class="top-bar">
+                <div class="logo">Shorts</div>
+                <div class="search-icon"><i class="fas fa-search"></i></div>
+            </div>
+            <div class="video-overlay">
+                <div class="channel-info">
+                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Channel" class="avatar">
+                    <div class="channel-name">@cooking_with_julia</div>
+                    <button class="subscribe-btn">Subscribe</button>
+                </div>
+                <div class="video-description">
+                    <div class="video-title">Quick 5-minute breakfast recipe 🍳</div>
+                    <p>Start your day with this delicious and healthy breakfast. So easy to make!</p>
+                </div>
+                <div class="video-music">
+                    <i class="fas fa-music"></i>
+                    <span>Morning Vibes - Chill Music</span>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="action-button like-button">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>42.1K</span>
+                </div>
+                <div class="action-button dislike-button">
+                    <i class="fas fa-thumbs-down"></i>
+                    <span>Dislike</span>
+                </div>
+                <div class="action-button" onclick="toggleComments()">
+                    <i class="fas fa-comment"></i>
+                    <span>8.7K</span>
+                </div>
+                <div class="action-button">
+                    <i class="fas fa-share"></i>
+                    <span>Share</span>
+                </div>
+            </div>
+            <div class="video-controls" onclick="togglePlay(this)">
+                <i class="fas fa-pause"></i>
+            </div>
+            <div class="swipe-hint">Swipe up for next video</div>
+        </div>
+        
+        <!-- Video 3 -->
+        <div class="short-video">
+            <video class="video-player" loop>
+                <source src="https://assets.codepen.io/3364143/sample.mp4" type="video/mp4">
+            </video>
+            <div class="progress-bar">
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment active"><div class="progress-fill"></div></div>
+                <div class="progress-segment"></div>
+            </div>
+            <div class="top-bar">
+                <div class="logo">Shorts</div>
+                <div class="search-icon"><i class="fas fa-search"></i></div>
+            </div>
+            <div class="video-overlay">
+                <div class="channel-info">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Channel" class="avatar">
+                    <div class="channel-name">@tech_reviews</div>
+                    <button class="subscribe-btn">Subscribe</button>
+                </div>
+                <div class="video-description">
+                    <div class="video-title">New smartphone camera test 📱</div>
+                    <p>Testing the new flagship phone's camera in low light conditions. Impressive results!</p>
+                </div>
+                <div class="video-music">
+                    <i class="fas fa-music"></i>
+                    <span>Tech Beats - Electronic</span>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="action-button like-button">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>18.3K</span>
+                </div>
+                <div class="action-button dislike-button">
+                    <i class="fas fa-thumbs-down"></i>
+                    <span>Dislike</span>
+                </div>
+                <div class="action-button" onclick="toggleComments()">
+                    <i class="fas fa-comment"></i>
+                    <span>2.4K</span>
+                </div>
+                <div class="action-button">
+                    <i class="fas fa-share"></i>
+                    <span>Share</span>
+                </div>
+            </div>
+            <div class="video-controls" onclick="togglePlay(this)">
+                <i class="fas fa-pause"></i>
+            </div>
+            <div class="swipe-hint">Swipe up for next video</div>
+        </div>
+        
+        <!-- Video 4 -->
+        <div class="short-video">
+            <video class="video-player" loop>
+                <source src="https://assets.codepen.io/3364143/sample.mp4" type="video/mp4">
+            </video>
+            <div class="progress-bar">
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment"></div>
+                <div class="progress-segment active"><div class="progress-fill"></div></div>
+            </div>
+            <div class="top-bar">
+                <div class="logo">Shorts</div>
+                <div class="search-icon"><i class="fas fa-search"></i></div>
+            </div>
+            <div class="video-overlay">
+                <div class="channel-info">
+                    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="Channel" class="avatar">
+                    <div class="channel-name">@fitness_motivation</div>
+                    <button class="subscribe-btn">Subscribe</button>
+                </div>
+                <div class="video-description">
+                    <div class="video-title">Full body workout in 15 minutes 💪</div>
+                    <p>No equipment needed! Perfect for busy schedules. Try it out!</p>
+                </div>
+                <div class="video-music">
+                    <i class="fas fa-music"></i>
+                    <span>Workout Mix - Pump Up</span>
+                </div>
+            </div>
+            <div class="action-buttons">
+                <div class="action-button like-button">
+                    <i class="fas fa-thumbs-up"></i>
+                    <span>56.9K</span>
+                </div>
+                <div class="action-button dislike-button">
+                    <i class="fas fa-thumbs-down"></i>
+                    <span>Dislike</span>
+                </div>
+                <div class="action-button" onclick="toggleComments()">
+                    <i class="fas fa-comment"></i>
+                    <span>12.1K</span>
+                </div>
+                <div class="action-button">
+                    <i class="fas fa-share"></i>
+                    <span>Share</span>
+                </div>
+            </div>
+            <div class="video-controls" onclick="togglePlay(this)">
+                <i class="fas fa-pause"></i>
+            </div>
+            <div class="swipe-hint">Swipe up for next video</div>
+        </div>
+    </div>
+    
+    <!-- Comments Section -->
+    <div class="comments-section" id="commentsSection">
+        <div class="comments-header">
+            <h3>Comments (124)</h3>
+            <button class="close-comments" onclick="toggleComments()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="comments-container">
+            <div class="comment">
+                <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="User" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-author">TravelFan99</div>
+                    <div class="comment-text">This looks absolutely amazing! Which month did you visit? I'm planning to go next year.</div>
+                    <div class="comment-actions">
+                        <div class="comment-action"><i class="fas fa-thumbs-up"></i> 245</div>
+                        <div class="comment-action"><i class="fas fa-thumbs-down"></i> 3</div>
+                        <div class="comment-action">Reply</div>
+                    </div>
+                </div>
+            </div>
+            <div class="comment">
+                <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="User" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-author">NatureLover</div>
+                    <div class="comment-text">The mountains look so majestic! I've been there 3 times and it never gets old.</div>
+                    <div class="comment-actions">
+                        <div class="comment-action"><i class="fas fa-thumbs-up"></i> 187</div>
+                        <div class="comment-action"><i class="fas fa-thumbs-down"></i> 1</div>
+                        <div class="comment-action">Reply</div>
+                    </div>
+                </div>
+            </div>
+            <div class="comment">
+                <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="User" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-author">AdventureSeeker</div>
+                    <div class="comment-text">What camera did you use for these shots? The quality is incredible!</div>
+                    <div class="comment-actions">
+                        <div class="comment-action"><i class="fas fa-thumbs-up"></i> 92</div>
+                        <div class="comment-action"><i class="fas fa-thumbs-down"></i> 0</div>
+                        <div class="comment-action">Reply</div>
+                    </div>
+                </div>
+            </div>
+            <div class="comment">
+                <img src="https://images.unsplash.com/photo-1504593811423-6dd665756598?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="User" class="comment-avatar">
+                <div class="comment-content">
+                    <div class="comment-author">MountainHiker</div>
+                    <div class="comment-text">I was there last summer! Did you try the local cheese? It's the best!</div>
+                    <div class="comment-actions">
+                        <div class="comment-action"><i class="fas fa-thumbs-up"></i> 76</div>
+                        <div class="comment-action"><i class="fas fa-thumbs-down"></i> 2</div>
+                        <div class="comment-action">Reply</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="add-comment">
+            <input type="text" placeholder="Add a comment...">
+            <button>Post</button>
+        </div>
+    </div>
+
+    <script>
+        // Play videos on scroll into view
+        const videoPlayers = document.querySelectorAll('.video-player');
+        const progressBars = document.querySelectorAll('.progress-fill');
+        
+        // Initialize the first video
+        videoPlayers[0].play();
+        
+        // Play/pause toggle
+        function togglePlay(button) {
+            const video = button.parentElement.querySelector('.video-player');
+            if (video.paused) {
+                video.play();
+                button.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                video.pause();
+                button.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+        
+        // Like button functionality
+        function toggleLike(button) {
+            button.classList.toggle('active');
+            const countElement = button.querySelector('span');
+            if (button.classList.contains('active')) {
+                const count = parseInt(countElement.textContent.replace('K', '')) * 1000;
+                const newCount = count + 1;
+                countElement.textContent = (newCount / 1000).toFixed(1) + 'K';
+            }
+        }
+        
+        // Dislike button functionality
+        function toggleDislike(button) {
+            button.classList.toggle('active');
+            button.querySelector('span').textContent = button.classList.contains('active') ? 'Disliked' : 'Dislike';
+        }
+        
+        // Comments section toggle
+        function toggleComments() {
+            const commentsSection = document.getElementById('commentsSection');
+            commentsSection.classList.toggle('active');
+        }
+        
+        // Scroll snapping for videos
+        const container = document.getElementById('shortsContainer');
+        let isScrolling = false;
+        
+        container.addEventListener('scroll', () => {
+            if (!isScrolling) {
+                window.requestAnimationFrame(() => {
+                    const videos = document.querySelectorAll('.short-video');
+                    videos.forEach(video => {
+                        const videoElement = video.querySelector('.video-player');
+                        const rect = video.getBoundingClientRect();
+                        
+                        // If video is in the middle of the viewport
+                        if (rect.top <= window.innerHeight / 2 && rect.bottom >= window.innerHeight / 2) {
+                            videoElement.play();
+                        } else {
+                            videoElement.pause();
+                        }
+                    });
+                    isScrolling = false;
+                });
+                isScrolling = true;
+            }
+        });
+        
+        // Reset progress bars when switching videos
+        container.addEventListener('scrollend', () => {
+            const videos = document.querySelectorAll('.short-video');
+            videos.forEach((video, index) => {
+                const rect = video.getBoundingClientRect();
+                if (Math.abs(rect.top) < 10) {
+                    // Reset all progress bars
+                    const allProgressBars = document.querySelectorAll('.progress-fill');
+                    allProgressBars.forEach(bar => {
+                        bar.style.animation = 'none';
+                        setTimeout(() => {
+                            bar.style.animation = '';
+                        }, 10);
+                    });
+                    
+                    // Start progress bar for current video
+                    const currentProgress = video.querySelector('.progress-segment.active .progress-fill');
+                    if (currentProgress) {
+                        currentProgress.style.animation = 'progress 15s linear forwards';
+                    }
+                }
+            });
+        });
+        
+        // Simulate progress bar animation for demo
+        setTimeout(() => {
+            const activeProgress = document.querySelector('.progress-segment.active .progress-fill');
+            if (activeProgress) {
+                activeProgress.style.animation = 'progress 15s linear forwards';
+            }
+        }, 100);
+    </script>
+</body>
+</html>
